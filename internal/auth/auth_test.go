@@ -34,3 +34,15 @@ func TestGetAPIKeyFailures(t *testing.T) {
 		}
 	})
 }
+
+func TestGetAPIKeyIgnoresExtraSegments(t *testing.T) {
+	headers := http.Header{}
+	headers.Set("Authorization", "ApiKey secret-token extra-data")
+	got, err := GetAPIKey(headers)
+	if err != nil {
+		t.Fatalf("unexpected error when extra segments are present: %v", err)
+	}
+	if got != "secret-token" {
+		t.Fatalf("expected token %q, got %q", "secret-token", got)
+	}
+}
